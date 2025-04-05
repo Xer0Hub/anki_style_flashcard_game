@@ -1,6 +1,5 @@
 #--------------IMPORTS AND DEPENDENCIES--------------------#
 from tkinter import *
-import json as js
 import pandas as pd
 #---------------------UI SET UP---------------------------#
 #CONSTANTS
@@ -27,40 +26,64 @@ card_back_img = PhotoImage(file="C:\\Users\\daniel.ginnane\\PycharmProjects\\Ank
 #--------------------FUNCTIONS AND DEFINITIONS------------------------------#
 def incorrect_answer():
     #KEEP CARD IN DECK
-    french_title.grid_remove()
-    french_card.grid_remove()
+    remove_french()
     show_answer()
 
 def correct_answer():
     #POP() CARD OUT OF LIST
     global card_counter
-    card_counter += 1
+    try:
+        french_dict.pop(card_counter)
+        card_counter += 1
+        print(french_dict)
 
-    card_back_onscreen.grid_remove()
+        french_card.grid_remove()
 
-    french_title.grid_remove()
-    french_card.grid_remove()
-    card_back_onscreen.grid(column=0, row=0, columnspan=2)
+        french_card.config(text=french_dict[card_counter])
+        french_card.grid(column=0, row=0, columnspan=2)
+    except KeyError:
+        card_counter = 0
+        correct_answer()
+
+
     #TODO Make it so when I remove french title and card I can re-add it!
 
+def remove_french():
+    french_title.grid_remove()
+    french_card.grid_remove()
+    card_back_onscreen.grid_remove()
+
+def remove_english():
+    english_title.grid_remove()
+    english_card.grid_remove()
+    card_front_onscreen.grid_remove()
+
+# #card_front_onscreen.grid(column=0, row=0, columnspan=2)
+# english_title.grid(column=0, row=0, columnspan=2, sticky="n")
+# english_card.grid(column=0, row=0, columnspan=2)
 
 def show_answer():
     global card_counter
 
-    card_front_onscreen = Label(image=card_front_img, bg=BACKGROUND_COLOR, highlightthickness=0, height=300, width=700)
-    card_front_onscreen.grid(column=0, row=0, columnspan=2)
+    english_card.config(text=english_dict[card_counter])
+    card_counter += 1
+    french_card.config(text=french_dict[card_counter])
 
-    english_title = Label(text="ENGLISH", font=("Arial", 15, "bold"), bg="white")
-    english_title.grid(column=0, row=0, columnspan=2, sticky="n")
+    card_back_onscreen.after(3000, lambda: show_card_back())
+    french_title.after(3000, lambda: show_french_title())
+    french_card.after(3000, lambda: show_french_card())
+    #TODO Later I'll have to make a way to cancel the delayed showing if they're spamming
 
-    english_card = Label(text=english_dict[card_counter], font=("Arial", 30, "bold"), bg="white")
-    english_card.grid(column=0, row=0, columnspan=2)
+def show_card_back():
+    card_back_onscreen.grid(column=0, row=0, columnspan=2)
+
+def show_french_title():
+    french_title.grid(column=0, row=0, columnspan=2, sticky="n")
+
+def show_french_card():
+    french_card.grid(column=0, row=0, columnspan=2)
 
 #---------------------ON SCREEN ------------------------------------#
-#ON SCREEN CARD
-card_back_onscreen = Label(image=card_back_img, highlightthickness=0, height=300, width=700)
-card_back_onscreen.grid(column=0, row=0, columnspan=2)
-
 #WORD LIST TO DICTIONARY
 french_list = pd.read_csv("french_words.csv")
 word_dict = french_list.to_dict(orient='dict')
@@ -71,7 +94,20 @@ french_dict = word_dict['French']
 
 #ENGLISH CARDS GET CALLED IN FUNCTION ONLY TO KEEP THEM CURRENT
 
+#ENGLISH CARDS
+card_front_onscreen = Label(image=card_front_img, bg=BACKGROUND_COLOR, highlightthickness=0, height=300, width=700)
+card_front_onscreen.grid(column=0, row=0, columnspan=2)
+
+english_title = Label(text="ENGLISH", font=("Arial", 15, "bold"), bg="white")
+english_title.grid(column=0, row=0, columnspan=2, sticky="n")
+
+english_card = Label(text=english_dict[card_counter], font=("Arial", 30, "bold"), bg="white")
+english_card.grid(column=0, row=0, columnspan=2)
+
 #FRENCH CARDS
+card_back_onscreen = Label(image=card_back_img, highlightthickness=0, height=300, width=700)
+card_back_onscreen.grid(column=0, row=0, columnspan=2)
+
 french_title = Label(text="FRENCH", font=("Arial", 15, "bold"), bg=BACK_OF_CARD)
 french_title.grid(column=0, row=0, columnspan=2, sticky="n")
 
