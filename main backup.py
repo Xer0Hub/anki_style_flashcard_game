@@ -1,11 +1,12 @@
 #--------------IMPORTS AND DEPENDENCIES--------------------#
-from gc import enable, disable
 from tkinter import *
 import pandas as pd
 #---------------------UI SET UP---------------------------#
 #CONSTANTS
 BACKGROUND_COLOR = "#B1DDC6"
 BACK_OF_CARD = "#91C2AF"
+
+#VARIABLES
 
 #DICTIONARY COUNTER
 card_counter = 0
@@ -23,15 +24,6 @@ card_front_img = PhotoImage(file="C:\\Users\\daniel.ginnane\\PycharmProjects\\An
 card_back_img = PhotoImage(file="C:\\Users\\daniel.ginnane\\PycharmProjects\\Anki_Lite\\card_back.png")
 
 #--------------------FUNCTIONS AND DEFINITIONS------------------------------#
-def enable_buttons():
-    for button in buttons_list:
-        button.config(state=NORMAL)
-
-def disable_buttons():
-    for button in buttons_list:
-        button.config(state=DISABLED)
-    window.after(3000, enable_buttons)
-
 def incorrect_answer():
     #KEEP CARD IN DECK
     remove_french()
@@ -50,8 +42,11 @@ def correct_answer():
         french_card.config(text=french_dict[card_counter])
         french_card.grid(column=0, row=0, columnspan=2)
     except KeyError:
-        french_card.grid(column=0, row=0, columnspan=2)
-        french_card.config(text="You've complete the deck!")
+        card_counter = 0
+        correct_answer()
+
+
+    #TODO Make it so when I remove french title and card I can re-add it!
 
 def remove_french():
     french_title.grid_remove()
@@ -63,6 +58,10 @@ def remove_english():
     english_card.grid_remove()
     card_front_onscreen.grid_remove()
 
+# #card_front_onscreen.grid(column=0, row=0, columnspan=2)
+# english_title.grid(column=0, row=0, columnspan=2, sticky="n")
+# english_card.grid(column=0, row=0, columnspan=2)
+
 def show_answer():
     global card_counter
 
@@ -73,9 +72,7 @@ def show_answer():
     card_back_onscreen.after(3000, lambda: show_card_back())
     french_title.after(3000, lambda: show_french_title())
     french_card.after(3000, lambda: show_french_card())
-    # DISABLE BUTTONS WHILE SHOWING ANSWER FOR ANTI SPAM
-    disable_buttons()
-
+    #TODO Later I'll have to make a way to cancel the delayed showing if they're spamming
 
 def show_card_back():
     card_back_onscreen.grid(column=0, row=0, columnspan=2)
@@ -124,7 +121,12 @@ correct_button.grid(column=1, row=1)
 incorrect_button = Button(image=incorrect_img, highlightthickness=0, command=incorrect_answer)
 incorrect_button.grid(column=0, row=1)
 
-buttons_list = correct_button, incorrect_button
+
+
+
+
+
+
 
 
 
