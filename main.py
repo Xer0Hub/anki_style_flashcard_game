@@ -43,8 +43,6 @@ def correct_answer():
     try:
         french_dict.pop(card_counter)
         card_counter += 1
-        print(french_dict)
-
         french_card.grid_remove()
 
         french_card.config(text=french_dict[card_counter])
